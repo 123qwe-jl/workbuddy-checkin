@@ -1,0 +1,22 @@
+name: Schedule Test
+
+# 纯诊断工作流：只报告触发类型与时间
+# 不读取 Secrets，不调用任何接口，不影响签到数据
+# 验证完成后可直接删除本文件
+
+on:
+  schedule:
+    # 每 5 分钟一次（从第 3 分钟开始：03,08,13,...58）
+    # GitHub Actions 允许的最短周期即为 5 分钟
+    - cron: '3/5 * * * *'
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Report trigger
+        run: |
+          echo "Event: ${{ github.event_name }}"
+          echo "UTC time: $(date -u '+%Y-%m-%d %H:%M:%S')"
+          echo "Schedule test passed"
