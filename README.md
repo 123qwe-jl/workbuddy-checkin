@@ -16,7 +16,7 @@ WorkBuddy 客户端从 **5.6.2** 起对登录态做了静态加密（AtRestEncry
 | 登录态里 `auth.accessToken` 的形态 | 明文（JWT 字符串） | **AES-256-GCM 信封**：`{"$wbEncrypted":1,"envelope":"<base64>"}` |
 | 本机能否直接读到明文 | ✅ 能 | ❌ **不能** —— 解密密钥不落盘，只在客户端进程内存里 |
 | **该配哪个 Secret** | `WB_ACCESS_TOKEN`（短效令牌直通） | **`WB_REFRESH_TOKEN`（长效令牌，强烈推荐）** |
-| 凭据有效期 | 约 2 个月 | 长效令牌约 **60 天**；轮换后旧值不会立即失效 |
+| 凭据有效期 | 约 2 个月 | 长效令牌约 **30 天**；轮换后旧值不会立即失效 |
 | 配置命令 | `python scripts/sync_token_to_github.py` | 同上（脚本会自动导出**长效令牌**） |
 | 旧版做法是否还能用 | ✅ | ❌ **把 accessToken 原样塞进 Secret 必然鉴权失败** |
 
@@ -233,7 +233,7 @@ python scripts/sync_token_to_github.py \
 
 | 通道 | 有效期 | 续期方式 |
 |---|---|---|
-| `WB_REFRESH_TOKEN`（长效令牌） | 约 60 天 | 重新登录客户端后，本机重跑 `python scripts/sync_token_to_github.py` |
+| `WB_REFRESH_TOKEN`（长效令牌） | 约 30 天 | 重新登录客户端后，本机重跑 `python scripts/sync_token_to_github.py` |
 | `WB_ACCESS_TOKEN`（短效令牌） | 约 2 个月 | 同上 |
 
 续期脚本会覆盖旧 Secret，无需其他操作。依赖「失败推送」通道即可在过期时收到提醒。
@@ -333,7 +333,7 @@ A：编辑 `.github/workflows/checkin.yml` 里的 `cron` 表达式即可（UTC �
 A：检查是否配置了任一通知通道 Secret；否则失败只体现为 Actions 页面红灯与 GitHub 邮件。
 
 **Q：前几周一直正常，突然不跑了？**
-A：两个常见原因：① 长效令牌过期（约 60 天），重跑 `sync_token_to_github.py` 续期；
+A：两个常见原因：① 长效令牌过期（约 30 天），重跑 `sync_token_to_github.py` 续期；
 ② GitHub 会对**连续 60 天无提交**的仓库自动停用定时工作流，到 Actions 页面手动 Run 一次即可恢复
 （本项目平时没有提交，这一条尤其容易中）。
 
