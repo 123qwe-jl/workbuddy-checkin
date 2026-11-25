@@ -16,7 +16,7 @@ WorkBuddy 客户端从 **5.6.2** 起对登录态做了静态加密（AtRestEncry
 | 登录态里 `auth.accessToken` 的形态 | 明文（JWT 字符串） | **AES-256-GCM 信封**：`{"$wbEncrypted":1,"envelope":"<base64>"}` |
 | 本机能否直接读到明文 | ✅ 能 | ❌ **不能** —— 解密密钥不落盘，只在客户端进程内存里 |
 | **该配哪个 Secret** | `WB_ACCESS_TOKEN`（短效令牌直通） | **`WB_REFRESH_TOKEN`（长效令牌，强烈推荐）** |
-| 凭据有效期 | 约 2 个月 | 长效令牌约 **30 天**；轮换后旧值不会立即失效 |
+| 凭据有效期 | 约 28 天（`expiresIn` = 2419200 秒） | 长效令牌约 **30 天**（`refreshExpiresIn` = 2591999 秒）；轮换后旧值不会立即失效 |
 | 配置命令 | `python scripts/sync_token_to_github.py` | 同上（脚本会自动导出**长效令牌**） |
 | 旧版做法是否还能用 | ✅ | ❌ **把 accessToken 原样塞进 Secret 必然鉴权失败** |
 
